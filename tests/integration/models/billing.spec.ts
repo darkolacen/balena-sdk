@@ -13,7 +13,7 @@ import {
 import type * as BalenaSdk from '../../..';
 const { expect } = m.chai;
 
-describe('Billing Model', function () {
+describe.skip('Billing Model', function () {
 	describe('Free Account', function () {
 		givenLoggedInUser(before);
 		givenInitialOrganization(before);
