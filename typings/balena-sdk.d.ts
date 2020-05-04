@@ -2,11 +2,10 @@ import * as BalenaErrors from 'balena-errors';
 import * as Promise from 'bluebird';
 import { EventEmitter } from 'events';
 
-import { Readable } from 'stream';
-
 import * as BalenaPine from './balena-pine';
 import { BalenaRequest, BalenaRequestStreamResult } from './balena-request';
 import * as DeviceOverallStatus from './device-overall-status';
+import * as OsTypes from './os-types';
 import * as Pine from './pinejs-client-core';
 import { Dictionary } from './utils';
 
@@ -15,6 +14,7 @@ declare namespace BalenaSdk {
 	type WithId = Pine.WithId;
 	type PineDeferred = Pine.PineDeferred;
 	type DeviceOverallStatus = DeviceOverallStatus.DeviceOverallStatus;
+	type OsTypes = OsTypes.OsTypes;
 
 	/**
 	 * When not selected-out holds a deferred.
@@ -752,6 +752,30 @@ declare namespace BalenaSdk {
 		current: string | undefined;
 	}
 
+	type OsLines = 'next' | 'current' | 'sunset' | 'outdated' | undefined;
+
+	interface OsVersion {
+		id: number;
+		rawVersion: string;
+		strippedVersion: string;
+		basedOnVersion?: string;
+		osType: string;
+		line?: OsLines;
+		variant?: string;
+
+		formattedVersion: string;
+		isRecommended?: boolean;
+	}
+
+	interface DeviceTypeOsVersions {
+		[deviceTypeSlug: string]: OsVersion[];
+	}
+
+	interface ApplicationCanUseApplicationAsHost {
+		application: NavigationResource<Application>;
+		can_use__application_as_host: NavigationResource<Application>;
+	}
+
 	interface ImageInstall {
 		id: number;
 		download_progress: number;
@@ -1424,6 +1448,24 @@ declare namespace BalenaSdk {
 					osArchitecture: string,
 					applicationArchitecture: string,
 				): boolean;
+			};
+
+			_os: {
+				getAllOsVersions(
+					deviceTypes: string[],
+					appType?: ApplicationType,
+				): Promise<DeviceTypeOsVersions>;
+				getSupportedOsVersions(
+					applicationId: number,
+					deviceTypes: string[],
+					appType?: ApplicationType,
+				): Promise<DeviceTypeOsVersions>;
+				getSupportedOsTypes(
+					applicationId: number,
+					deviceTypes: string[],
+				): Promise<string[]>;
+				hasEsrVersions(deviceTypes: string[]): Promise<Dictionary<boolean>>;
+				OsTypes: typeof OsTypes.OsTypes;
 			};
 		};
 
