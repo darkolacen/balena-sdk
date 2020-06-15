@@ -54,6 +54,12 @@ const modelsTemplate = {
 	os: () => require('./os').default,
 
 	/**
+	 * @namespace _os
+	 * @memberof balena.models
+	 */
+	_os: () => require('./newOs').default,
+
+	/**
 	 * @namespace config
 	 * @memberof balena.models
 	 */
