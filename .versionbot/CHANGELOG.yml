@@ -1,4 +1,16 @@
 - commits:
+    - subject: Use hostapps to fetch OS versions
+      hash: ec9afe81a1ef7c5512cde2365da2fd08a2c7330e
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Stevche Radevski <stevche@balena.io>
+        signed-off-by: Stevche Radevski <stevche@balena.io>
+      author: Stevche Radevski
+  version: 14.1.0
+  date: 2020-06-23T16:01:20.877Z
+- commits:
     - subject: 'appveyor: Increase the node space size'
       hash: 32358a89c057d71695fe8c6ac4753f26485df86e
       body: ''
