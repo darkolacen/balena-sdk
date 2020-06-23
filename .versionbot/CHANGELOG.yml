@@ -1,4 +1,16 @@
 - commits:
+    - subject: Use hostapps to fetch OS versions
+      hash: ec9afe81a1ef7c5512cde2365da2fd08a2c7330e
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Stevche Radevski <stevche@balena.io>
+        signed-off-by: Stevche Radevski <stevche@balena.io>
+      author: Stevche Radevski
+  version: 14.1.0
+  date: 2020-06-23T16:02:51.528Z
+- commits:
     - subject: 'appveyor: Increase the node space size'
       hash: 32358a89c057d71695fe8c6ac4753f26485df86e
       body: ''
@@ -3168,7 +3180,7 @@
       body: Add typings for the device.getSupervisorTargetState method
       footers:
         change-type: minor
-        hq: 'balena-io/balena#1663'
+        hq: balena-io/balena#1663
         signed-off-by: Thodoris Greasidis <thodoris@balena.io>
       hash: 7aad0d0953236feb7f1f34a9aca51972af099079
       subject: 'diagnostics: add getSupervisorTargetState support'
@@ -3245,7 +3257,7 @@
       body: ''
       footers:
         change-type: minor
-        hq: 'balena-io/balena#1663'
+        hq: balena-io/balena#1663
         signed-off-by: Matthew McGinn <mamcgi@gmail.com>
       hash: f0c5dbf1c4db166b8be3a8d1f43e8cd36cd805d0
       subject: Add getSupervisorState device method
