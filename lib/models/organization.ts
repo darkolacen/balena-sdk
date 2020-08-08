@@ -94,7 +94,7 @@ const getOrganizationModel = function (deps: InjectedDependenciesParam) {
 	const getAll = function (
 		options: BalenaSdk.PineOptions<BalenaSdk.Organization> = {},
 	): Promise<BalenaSdk.Organization[]> {
-		return pine.get<BalenaSdk.Organization>({
+		return pine.get({
 			resource: 'organization',
 			options: mergePineOptions(
 				{
@@ -141,7 +141,7 @@ const getOrganizationModel = function (deps: InjectedDependenciesParam) {
 			throw new errors.BalenaInvalidParameterError('handleOrId', handleOrId);
 		}
 
-		const organization = await pine.get<BalenaSdk.Organization>({
+		const organization = await pine.get({
 			resource: 'organization',
 			id: isId(handleOrId) ? handleOrId : { handle: handleOrId },
 			options,
