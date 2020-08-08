@@ -18,19 +18,17 @@ import type { InjectedOptionsParam, InjectedDependenciesParam } from '..';
 import {
 	Device,
 	PineOptions,
-	ServiceInstall,
 	DeviceServiceEnvironmentVariable,
 	OsUpdateActionResult,
 	DeviceVariable,
 	DeviceTag,
-	SupervisorRelease,
 	Application,
-	Release,
 	SupervisorStatus,
 	DeviceTypeJson,
 	DeviceWithServiceDetails,
 	CurrentServiceWithCommit,
 	DeviceState,
+	PineTypedResult,
 } from '../..';
 
 import * as url from 'url';
@@ -48,6 +46,8 @@ import {
 	treatAsMissingDevice,
 	LOCKED_STATUS_CODE,
 } from '../util';
+
+import { toWritable } from '../util/types';
 
 import {
 	getDeviceOsSemverWithVariant,
@@ -330,7 +330,7 @@ const getDeviceModel = function (
 				resource: 'device',
 				options: mergePineOptions({ $orderby: 'device_name asc' }, options),
 			});
-			return devices.map(addExtraInfo);
+			return devices.map(addExtraInfo) as Device[];
 		},
 
 		/**
@@ -514,7 +514,7 @@ const getDeviceModel = function (
 				}
 				device = devices[0];
 			}
-			return addExtraInfo(device);
+			return addExtraInfo(device) as Device;
 		},
 
 		/**
@@ -671,10 +671,15 @@ const getDeviceModel = function (
 		 * });
 		 */
 		getApplicationName: async (uuidOrId: string | number): Promise<string> => {
-			const device = (await exports.get(uuidOrId, {
+			const deviceOptions = {
 				$select: 'id',
 				$expand: { belongs_to__application: { $select: 'app_name' } },
-			})) as Device & { belongs_to__application: [Application] };
+			} as const;
+
+			const device = (await exports.get(
+				uuidOrId,
+				deviceOptions,
+			)) as PineTypedResult<Device, typeof deviceOptions>;
 			return device.belongs_to__application[0].app_name;
 		},
 
@@ -718,10 +723,15 @@ const getDeviceModel = function (
 			env: { [key: string]: string | number };
 			imageId: string;
 		}> => {
-			const device = (await exports.get(uuidOrId, {
-				$select: ['id', 'supervisor_version'],
+			const deviceOptions = {
+				$select: toWritable(['id', 'supervisor_version'] as const),
 				$expand: { belongs_to__application: { $select: 'id' } },
-			})) as Device & { belongs_to__application: [Application] };
+			} as const;
+
+			const device = (await exports.get(
+				uuidOrId,
+				deviceOptions,
+			)) as PineTypedResult<Device, typeof deviceOptions>;
 			ensureSupervisorCompatibility(
 				device.supervisor_version,
 				MIN_SUPERVISOR_APPS_API,
@@ -1114,16 +1124,25 @@ const getDeviceModel = function (
 			uuidOrId: string | number,
 			applicationNameOrSlugOrId: string | number,
 		): Promise<void> => {
+			const deviceOptions = {
+				$select: 'uuid',
+				$expand: { is_of__device_type: { $select: 'slug' } },
+			} as const;
+
+			const applicationOptions = {
+				$select: 'id',
+				$expand: { is_for__device_type: { $select: 'slug' } },
+			} as const;
+
 			const [device, deviceTypes, application] = await Promise.all([
-				exports.get(uuidOrId, {
-					$select: 'uuid',
-					$expand: { is_of__device_type: { $select: 'slug' } },
-				}) as Promise<Device & { is_of__device_type: [DeviceType] }>,
+				exports.get(uuidOrId, deviceOptions) as Promise<
+					PineTypedResult<Device, typeof deviceOptions>
+				>,
 				configModel().getDeviceTypes(),
-				applicationModel().get(applicationNameOrSlugOrId, {
-					$select: 'id',
-					$expand: { is_for__device_type: { $select: 'slug' } },
-				}) as Promise<Application & { is_for__device_type: [DeviceType] }>,
+				applicationModel().get(
+					applicationNameOrSlugOrId,
+					applicationOptions,
+				) as Promise<PineTypedResult<Application, typeof applicationOptions>>,
 			]);
 			const osDeviceType = deviceTypesUtils().getBySlug(
 				deviceTypes,
@@ -1186,10 +1205,14 @@ const getDeviceModel = function (
 		 * });
 		 */
 		startApplication: async (uuidOrId: string | number): Promise<void> => {
-			const device = (await exports.get(uuidOrId, {
-				$select: ['id', 'supervisor_version'],
-				$expand: { belongs_to__application: { $select: 'id' } },
-			})) as Device & { belongs_to__application: [Application] };
+			const deviceOptions = {
+				$select: toWritable(['id', 'supervisor_version'] as const),
+				$expand: { belongs_to__application: { $select: 'id' as const } },
+			};
+			const device = (await exports.get(
+				uuidOrId,
+				deviceOptions,
+			)) as PineTypedResult<Device, typeof deviceOptions>;
 			ensureSupervisorCompatibility(
 				device.supervisor_version,
 				MIN_SUPERVISOR_APPS_API,
@@ -1240,10 +1263,14 @@ const getDeviceModel = function (
 		 * });
 		 */
 		stopApplication: async (uuidOrId: string | number): Promise<void> => {
-			const device = (await exports.get(uuidOrId, {
-				$select: ['id', 'supervisor_version'],
-				$expand: { belongs_to__application: { $select: 'id' } },
-			})) as Device & { belongs_to__application: [Application] };
+			const deviceOptions = {
+				$select: toWritable(['id', 'supervisor_version'] as const),
+				$expand: { belongs_to__application: { $select: 'id' as const } },
+			};
+			const device = (await exports.get(
+				uuidOrId,
+				deviceOptions,
+			)) as PineTypedResult<Device, typeof deviceOptions>;
 			ensureSupervisorCompatibility(
 				device.supervisor_version,
 				MIN_SUPERVISOR_APPS_API,
@@ -1337,10 +1364,14 @@ const getDeviceModel = function (
 			uuidOrId: string | number,
 			imageId: number,
 		): Promise<void> => {
-			const device = (await exports.get(uuidOrId, {
-				$select: ['id', 'supervisor_version'],
-				$expand: { belongs_to__application: { $select: 'id' } },
-			})) as Device & { belongs_to__application: [Application] };
+			const deviceOptions = {
+				$select: toWritable(['id', 'supervisor_version'] as const),
+				$expand: { belongs_to__application: { $select: 'id' as const } },
+			};
+			const device = (await exports.get(
+				uuidOrId,
+				deviceOptions,
+			)) as PineTypedResult<Device, typeof deviceOptions>;
 			ensureSupervisorCompatibility(
 				device.supervisor_version,
 				MIN_SUPERVISOR_MC_API,
@@ -1393,10 +1424,14 @@ const getDeviceModel = function (
 			uuidOrId: string | number,
 			imageId: number,
 		): Promise<void> => {
-			const device = (await exports.get(uuidOrId, {
-				$select: ['id', 'supervisor_version'],
-				$expand: { belongs_to__application: { $select: 'id' } },
-			})) as Device & { belongs_to__application: [Application] };
+			const deviceOptions = {
+				$select: toWritable(['id', 'supervisor_version'] as const),
+				$expand: { belongs_to__application: { $select: 'id' as const } },
+			};
+			const device = (await exports.get(
+				uuidOrId,
+				deviceOptions,
+			)) as PineTypedResult<Device, typeof deviceOptions>;
 			ensureSupervisorCompatibility(
 				device.supervisor_version,
 				MIN_SUPERVISOR_MC_API,
@@ -1449,10 +1484,14 @@ const getDeviceModel = function (
 			uuidOrId: string | number,
 			imageId: number,
 		): Promise<void> => {
-			const device = (await exports.get(uuidOrId, {
-				$select: ['id', 'supervisor_version'],
-				$expand: { belongs_to__application: { $select: 'id' } },
-			})) as Device & { belongs_to__application: [Application] };
+			const deviceOptions = {
+				$select: toWritable(['id', 'supervisor_version'] as const),
+				$expand: { belongs_to__application: { $select: 'id' as const } },
+			};
+			const device = (await exports.get(
+				uuidOrId,
+				deviceOptions,
+			)) as PineTypedResult<Device, typeof deviceOptions>;
 			ensureSupervisorCompatibility(
 				device.supervisor_version,
 				MIN_SUPERVISOR_MC_API,
@@ -1566,10 +1605,15 @@ const getDeviceModel = function (
 				options = {};
 			}
 
-			const device = (await exports.get(uuidOrId, {
+			const deviceOptions = {
 				$select: 'id',
 				$expand: { belongs_to__application: { $select: 'id' } },
-			})) as Device & { belongs_to__application: [Application] };
+			} as const;
+
+			const device = (await exports.get(
+				uuidOrId,
+				deviceOptions,
+			)) as PineTypedResult<Device, typeof deviceOptions>;
 			await request
 				.send({
 					method: 'POST',
@@ -1617,10 +1661,14 @@ const getDeviceModel = function (
 		 * });
 		 */
 		purge: async (uuidOrId: string | number): Promise<void> => {
-			const device = (await exports.get(uuidOrId, {
+			const deviceOptions = {
 				$select: 'id',
 				$expand: { belongs_to__application: { $select: 'id' } },
-			})) as Device & { belongs_to__application: [Application] };
+			} as const;
+			const device = (await exports.get(
+				uuidOrId,
+				deviceOptions,
+			)) as PineTypedResult<Device, typeof deviceOptions>;
 			await request
 				.send({
 					method: 'POST',
@@ -1680,10 +1728,15 @@ const getDeviceModel = function (
 				options = {};
 			}
 
-			const device = (await exports.get(uuidOrId, {
+			const deviceOptions = {
 				$select: 'id',
 				$expand: { belongs_to__application: { $select: 'id' } },
-			})) as Device & { belongs_to__application: [Application] };
+			} as const;
+
+			const device = (await exports.get(
+				uuidOrId,
+				deviceOptions,
+			)) as PineTypedResult<Device, typeof deviceOptions>;
 			await request.send({
 				method: 'POST',
 				url: '/supervisor/v1/update',
@@ -1958,10 +2011,15 @@ const getDeviceModel = function (
 		getManifestByApplication: async (
 			nameOrSlugOrId: string | number,
 		): Promise<DeviceTypeJson.DeviceType> => {
-			const app = (await applicationModel().get(nameOrSlugOrId, {
+			const applicationOptions = {
 				$select: 'id',
 				$expand: { is_for__device_type: { $select: 'slug' } },
-			})) as Application & { is_for__device_type: [DeviceType] };
+			} as const;
+
+			const app = (await applicationModel().get(
+				nameOrSlugOrId,
+				applicationOptions,
+			)) as PineTypedResult<Application, typeof applicationOptions>;
 			return await exports.getManifestBySlug(app.is_for__device_type[0].slug);
 		},
 
@@ -2024,13 +2082,18 @@ const getDeviceModel = function (
 			uuid: string;
 			api_key: string;
 		}> {
+			const applicationOptions = {
+				$select: 'id',
+				$expand: { is_for__device_type: { $select: 'slug' } },
+			} as const;
+
 			const [userId, apiKey, application] = await Promise.all([
 				sdkInstance.auth.getUserId(),
 				applicationModel().generateProvisioningKey(applicationNameOrSlugOrId),
-				applicationModel().get(applicationNameOrSlugOrId, {
-					$select: 'id',
-					$expand: { is_for__device_type: { $select: 'slug' } },
-				}) as Promise<Application & { is_for__device_type: [DeviceType] }>,
+				applicationModel().get(
+					applicationNameOrSlugOrId,
+					applicationOptions,
+				) as Promise<PineTypedResult<Application, typeof applicationOptions>>,
 			]);
 			return await registerDevice().register({
 				userId,
@@ -2430,10 +2493,15 @@ const getDeviceModel = function (
 		 * });
 		 */
 		ping: async (uuidOrId: string | number): Promise<void> => {
-			const device = (await exports.get(uuidOrId, {
+			const deviceOptions = {
 				$select: 'id',
 				$expand: { belongs_to__application: { $select: 'id' } },
-			})) as Device & { belongs_to__application: [Application] };
+			} as const;
+
+			const device = (await exports.get(
+				uuidOrId,
+				deviceOptions,
+			)) as PineTypedResult<Device, typeof deviceOptions>;
 			await request.send({
 				method: 'POST',
 				url: '/supervisor/ping',
@@ -2711,10 +2779,7 @@ const getDeviceModel = function (
 		getTargetReleaseHash: async (
 			uuidOrId: string | number,
 		): Promise<string | undefined> => {
-			const {
-				should_be_running__release,
-				belongs_to__application,
-			} = (await exports.get(uuidOrId, {
+			const deviceOptions = {
 				$select: 'id',
 				$expand: {
 					should_be_running__release: {
@@ -2722,17 +2787,18 @@ const getDeviceModel = function (
 					},
 					belongs_to__application: {
 						$select: 'id',
-						$expand: { should_be_running__release: { $select: ['commit'] } },
+						$expand: { should_be_running__release: { $select: 'commit' } },
 					},
 				},
-			})) as Device & {
-				should_be_running__release: [Release?];
-				belongs_to__application: [
-					Application & {
-						should_be_running__release: [Release?];
-					},
-				];
-			};
+			} as const;
+
+			const {
+				should_be_running__release,
+				belongs_to__application,
+			} = (await exports.get(uuidOrId, deviceOptions)) as PineTypedResult<
+				Device,
+				typeof deviceOptions
+			>;
 			if (should_be_running__release.length > 0) {
 				return should_be_running__release[0]!.commit;
 			}
@@ -2786,7 +2852,8 @@ const getDeviceModel = function (
 				const releaseFilterProperty = isId(fullReleaseHashOrId)
 					? 'id'
 					: 'commit';
-				const { id, belongs_to__application } = (await exports.get(uuidOrId, {
+
+				const deviceOptions = {
 					$select: 'id',
 					$expand: {
 						belongs_to__application: {
@@ -2804,13 +2871,12 @@ const getDeviceModel = function (
 							},
 						},
 					},
-				})) as Device & {
-					belongs_to__application: [
-						Application & {
-							owns__release: Release[];
-						},
-					];
-				};
+				} as const;
+
+				const { id, belongs_to__application } = (await exports.get(
+					uuidOrId,
+					deviceOptions,
+				)) as PineTypedResult<Device, typeof deviceOptions>;
 				const app = belongs_to__application[0];
 				const release = app.owns__release[0];
 				if (!release) {
@@ -2868,11 +2934,17 @@ const getDeviceModel = function (
 				const releaseFilterProperty = isId(supervisorVersionOrId)
 					? 'id'
 					: 'supervisor_version';
-				const device = (await exports.get(uuidOrId, {
+
+				const deviceOpts = {
 					$select: 'id',
 					$expand: { is_of__device_type: { $select: 'slug' } },
-				})) as Device & { is_of__device_type: [DeviceType] };
-				const [supervisorRelease] = await pine.get<SupervisorRelease>({
+				} as const;
+
+				const device = (await exports.get(
+					uuidOrId,
+					deviceOpts,
+				)) as PineTypedResult<Device, typeof deviceOpts>;
+				const [supervisorRelease] = await pine.get({
 					resource: 'supervisor_release',
 					options: {
 						$top: 1,
@@ -2955,7 +3027,9 @@ const getDeviceModel = function (
 				is_online,
 				os_version,
 				os_variant,
-			}: Device & { is_of__device_type: [DeviceType] },
+			}: Pick<Device, 'uuid' | 'is_online' | 'os_version' | 'os_variant'> & {
+				is_of__device_type: [Pick<DeviceType, 'slug'>];
+			},
 			targetOsVersion: string,
 		) {
 			if (!uuid) {
@@ -3017,10 +3091,16 @@ const getDeviceModel = function (
 				);
 			}
 
-			const device = (await exports.get(uuid, {
-				$select: ['is_online', 'os_version', 'os_variant'],
-				$expand: { is_of__device_type: { $select: 'slug' } },
-			})) as Device & { is_of__device_type: [DeviceType] };
+			const deviceOpts = {
+				$select: toWritable(['is_online', 'os_version', 'os_variant'] as const),
+				$expand: { is_of__device_type: { $select: 'slug' as const } },
+			};
+
+			const device = (await exports.get(uuid, deviceOpts)) as PineTypedResult<
+				Device,
+				typeof deviceOpts
+			> &
+				Pick<Device, 'uuid'>;
 
 			device.uuid = uuid;
 			// this will throw an error if the action isn't available
@@ -3080,10 +3160,16 @@ const getDeviceModel = function (
 				);
 			}
 
-			const device = (await exports.get(uuid, {
-				$select: ['is_online', 'os_version', 'os_variant'],
-				$expand: { is_of__device_type: { $select: 'slug' } },
-			})) as Device & { is_of__device_type: [DeviceType] };
+			const deviceOpts = {
+				$select: toWritable(['is_online', 'os_version', 'os_variant'] as const),
+				$expand: { is_of__device_type: { $select: 'slug' as const } },
+			};
+
+			const device = (await exports.get(uuid, deviceOpts)) as PineTypedResult<
+				Device,
+				typeof deviceOpts
+			> &
+				Pick<Device, 'uuid'>;
 
 			device.uuid = uuid;
 			// this will throw an error if the action isn't available
@@ -3844,7 +3930,7 @@ const getDeviceModel = function (
 				key: string,
 			): Promise<string | undefined> {
 				const { id: deviceId } = await exports.get(uuidOrId, { $select: 'id' });
-				const [variable] = await pine.get<DeviceServiceEnvironmentVariable>({
+				const [variable] = await pine.get({
 					resource: 'device_service_environment_variable',
 					options: {
 						$select: 'value',
@@ -3917,7 +4003,7 @@ const getDeviceModel = function (
 							},
 					  };
 
-				const serviceInstalls = await pine.get<ServiceInstall>({
+				const serviceInstalls = await pine.get({
 					resource: 'service_install',
 					options: {
 						$select: 'id',
