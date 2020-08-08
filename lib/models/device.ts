@@ -229,7 +229,9 @@ const getDeviceModel = function (
 		}
 	};
 
-	const addExtraInfo = function (device: Device) {
+	const addExtraInfo = function <
+		T extends Parameters<typeof normalizeDeviceOsVersion>[0]
+	>(device: T) {
 		normalizeDeviceOsVersion(device);
 		return device;
 	};
