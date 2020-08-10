@@ -305,8 +305,8 @@ export interface Device {
 	device_tag: ReverseNavigationResource<DeviceTag>;
 	manages__device: ReverseNavigationResource<Device>;
 	service_install: ReverseNavigationResource<ServiceInstall>;
-	image_install?: ReverseNavigationResource<ImageInstall>;
-	gateway_download?: ReverseNavigationResource<GatewayDownload>;
+	image_install: ReverseNavigationResource<ImageInstall>;
+	gateway_download: ReverseNavigationResource<GatewayDownload>;
 }
 
 /** device_type */
@@ -330,10 +330,6 @@ export interface OrganizationPrivateDeviceTypeAccess {
 	organization: NavigationResource<Organization>;
 	has_private_access_to__device_type: NavigationResource<DeviceType>;
 }
-
-/** @deprecated Use the Device type directly */
-export type DeviceWithImageInstalls = Device &
-	Required<Pick<Device, 'image_install' | 'gateway_download'>>;
 
 export interface SupervisorRelease {
 	created_at: string;
