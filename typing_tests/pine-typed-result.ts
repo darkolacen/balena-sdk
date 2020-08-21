@@ -475,3 +475,52 @@ let aStringOrUndefined: string | undefined;
 	// @ts-expect-error
 	aNumber = result.should_be_running__release.__id;
 }
+
+// $count
+
+{
+	type deviceOptionsNoProps = PineClient.TypedResult<
+		BalenaSdk.Device,
+		{ $count: {} }
+	>;
+
+	const result: deviceOptionsNoProps = {} as any;
+
+	aNumber = result;
+}
+
+{
+	type deviceOptionsNoProps = PineClient.TypedResult<
+		BalenaSdk.Device,
+		{
+			$select: 'id',
+			$expand: {
+			belongs_to__application: {
+				$count: {},
+			}
+		} }
+	>;
+
+	const result: deviceOptionsNoProps = {} as any;
+
+	aNumber = result.id;
+	aNumber = result.belongs_to__application;
+}
+
+{
+	type deviceOptionsNoProps = PineClient.TypedResult<
+		BalenaSdk.Device,
+		{
+			$select: 'id',
+			$expand: {
+			device_tag: {
+				$count: {},
+			}
+		} }
+	>;
+
+	const result: deviceOptionsNoProps = {} as any;
+
+	aNumber = result.id;
+	aNumber = result.device_tag;
+}
