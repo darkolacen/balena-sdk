@@ -52,6 +52,7 @@ export type {
 	ODataOptionsWithFilter as PineOptionsWithFilter,
 	SelectableProps as PineSelectableProps,
 	ExpandableProps as PineExpandableProps,
+	TypedResult as PineTypedResult,
 } from '../pinejs-client-core';
 export type { PineWithSelectOnGet } from '../balena-pine';
 
