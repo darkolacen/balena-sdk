@@ -81,7 +81,7 @@ type ExpandedProperty<
 	? Array<TypedResult<InferAssociatedResourceType<T[K]>, KOpts>>
 	: never;
 
-type ExpandResultObject<T, Props extends keyof T> = {
+export type ExpandResultObject<T, Props extends keyof T> = {
 	[P in Props]: ExpandedProperty<T, P, {}>;
 };
 
