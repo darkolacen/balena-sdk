@@ -1,4 +1,59 @@
 - commits:
+    - subject: 'typings: Make ReleaseWithImageDetails more accurate'
+      hash: 324610ad3742e601bc3021cc4f645489a5ab1f43
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Make some typings more explicit
+      hash: 6157bf7372635a675feb475dfcfab074d044be98
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Fully type the pine.get results
+      hash: 7690f91966cd61f8bff1e42660376632ee5fe9a7
+      body: ''
+      footer:
+        Connects-to: '#887'
+        connects-to: '#887'
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+    - subject: 'typings: Expose the PineExpandResultObject helper type'
+      hash: 3fcddc312fc7690bcfa1cd338184f620c40dd8f4
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+    - subject: 'typings: Add the PineTypedResult helper type'
+      hash: 250a6c7e1e97d66230d620e104686d29cde26fa4
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 15.4.0
+  date: 2020-08-26T12:54:30.422Z
+- commits:
     - subject: 'tests: Update the tests for the new maximum application name size'
       hash: 19f3c01a03c272875702676d40b3408642f90b2b
       body: ''
