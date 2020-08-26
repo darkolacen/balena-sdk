@@ -1,4 +1,15 @@
 - commits:
+    - subject: Add dependabot configuration
+      hash: b122eef61245023f672078161e9d98cc75cb48db
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 15.3.5
+  date: 2020-08-26T17:27:50.312Z
+- commits:
     - subject: 'tests: Update the tests for the new maximum application name size'
       hash: 19f3c01a03c272875702676d40b3408642f90b2b
       body: ''
