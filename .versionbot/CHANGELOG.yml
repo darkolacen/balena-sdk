@@ -1,4 +1,59 @@
 - commits:
+    - subject: 'typings: Make ReleaseWithImageDetails more accurate'
+      hash: 7f5824e433c664abea767eb1a6eab0ab20688a34
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Make some typings more explicit
+      hash: 89ae1f35e1c0ceeb1dfd08c2485e9ba71b41a412
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Fully type the pine.get results
+      hash: 46fc2193fc00eb6dae6a0a633de9c6acd9a46ecc
+      body: ''
+      footer:
+        Connects-to: '#887'
+        connects-to: '#887'
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+    - subject: 'typings: Expose the PineExpandResultObject helper type'
+      hash: 26c9ea02de6afbf6f8c9a6ec3a68ea337dec2d38
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+    - subject: 'typings: Add the PineTypedResult helper type'
+      hash: 6e93d6cee612232d46e6c9ec752be88727b4c49e
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 15.4.0
+  date: 2020-08-27T13:01:22.892Z
+- commits:
     - subject: 'Improve $orderby typing to allow `[{a: ''desc''}, {b: ''asc''}]`'
       hash: 0ded115ec8609c17a73f0dea6ab0cc8eea5fb530
       body: ''
