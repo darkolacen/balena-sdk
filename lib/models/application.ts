@@ -18,11 +18,11 @@ import type { SubmitBody } from '../../typings/pinejs-client-core';
 import type { InjectedDependenciesParam, InjectedOptionsParam } from '..';
 import {
 	PineOptions,
+	PineTypedResult,
 	DeviceWithServiceDetails,
 	CurrentService,
 	ApplicationType,
 	CurrentServiceWithCommit,
-	Release,
 	ApplicationTag,
 	ApplicationVariable,
 	BuildVariable,
@@ -47,12 +47,7 @@ import {
 	getCurrentServiceDetailsPineExpand,
 	generateCurrentServiceDetails,
 } from '../util/device-service-details';
-import {
-	Application,
-	DeviceType,
-	Device,
-	Organization,
-} from '../../typings/balena-sdk';
+import { Application, Device, Organization } from '../../typings/balena-sdk';
 
 const getApplicationModel = function (
 	deps: InjectedDependenciesParam,
@@ -629,7 +624,7 @@ const getApplicationModel = function (
 						throw new errors.BalenaDiscontinuedDeviceType(deviceType);
 					}
 
-					const dt = await pine.get<DeviceType>({
+					const dt = await pine.get({
 						resource: 'device_type',
 						id: {
 							// this way we get the un-aliased device type slug
@@ -1060,10 +1055,10 @@ const getApplicationModel = function (
 		isTrackingLatestRelease: async (
 			nameOrSlugOrId: string | number,
 		): Promise<boolean> => {
-			const application = (await exports.get(nameOrSlugOrId, {
-				$select: ['should_track_latest_release'],
+			const appOptions = {
+				$select: 'should_track_latest_release',
 				$expand: {
-					should_be_running__release: { $select: ['id'] },
+					should_be_running__release: { $select: 'id' },
 					owns__release: {
 						$select: 'id',
 						$top: 1,
@@ -1073,16 +1068,17 @@ const getApplicationModel = function (
 						$orderby: 'created_at desc',
 					},
 				},
-			})) as Application & {
-				should_be_running__release: Release[];
-				owns__release: Release[];
-			};
+			} as const;
+
+			const application = (await exports.get(
+				nameOrSlugOrId,
+				appOptions,
+			)) as PineTypedResult<Application, typeof appOptions>;
 			const trackedRelease = application.should_be_running__release[0];
 			const latestRelease = application.owns__release[0];
 			return (
 				application.should_track_latest_release &&
-				(!latestRelease ||
-					(trackedRelease && trackedRelease.id === latestRelease.id))
+				(!latestRelease || trackedRelease?.id === latestRelease.id)
 			);
 		},
 
@@ -1147,7 +1143,7 @@ const getApplicationModel = function (
 		 * @memberof balena.models.application
 		 *
 		 * @param {String|Number} nameOrSlugOrId - application name (string), slug (string) or id (number)
-		 * @fulfil {String} - The release hash of the current release
+		 * @fulfil {String|undefined} - The release hash of the current release
 		 * @returns {Promise}
 		 *
 		 * @example
@@ -1167,13 +1163,16 @@ const getApplicationModel = function (
 		 */
 		getTargetReleaseHash: async (
 			nameOrSlugOrId: string | number,
-		): Promise<string> => {
-			const application = (await exports.get(nameOrSlugOrId, {
+		): Promise<string | undefined> => {
+			const appOptions = {
 				$select: 'id',
-				$expand: { should_be_running__release: { $select: ['commit'] } },
-			})) as Application & {
-				should_be_running__release: Release[];
-			};
+				$expand: { should_be_running__release: { $select: 'commit' } },
+			} as const;
+
+			const application = (await exports.get(
+				nameOrSlugOrId,
+				appOptions,
+			)) as PineTypedResult<Application, typeof appOptions>;
 			return application.should_be_running__release[0]?.commit;
 		},
 
@@ -1208,7 +1207,7 @@ const getApplicationModel = function (
 		trackLatestRelease: async (
 			nameOrSlugOrId: string | number,
 		): Promise<void> => {
-			const application = (await exports.get(nameOrSlugOrId, {
+			const appOptions = {
 				$select: 'id',
 				$expand: {
 					owns__release: {
@@ -1220,9 +1219,12 @@ const getApplicationModel = function (
 						$orderby: 'created_at desc',
 					},
 				},
-			})) as Application & {
-				owns__release: Release[];
-			};
+			} as const;
+
+			const application = (await exports.get(
+				nameOrSlugOrId,
+				appOptions,
+			)) as PineTypedResult<Application, typeof appOptions>;
 			const body: SubmitBody<Application> = {
 				should_track_latest_release: true,
 			};
