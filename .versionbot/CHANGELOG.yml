@@ -1,4 +1,19 @@
 - commits:
+    - subject: Add methods for retrieving organization memberships
+      hash: 2dc25c243a69ab815fde0dc7f9ed7357b46e5c09
+      body: |
+        Didn't include an add method, since how that should
+        work needs further discussion.
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 15.5.0
+  date: 2020-08-28T14:26:36.280Z
+- commits:
     - subject: Add missing balena-request typings for the refreshToken method
       hash: acbe2b22d029230767210a4d5a7490aa0b12545b
       body: ''
