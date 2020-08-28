@@ -30,6 +30,8 @@ import {
 	ServiceEnvironmentVariable,
 	SSHKey,
 	Organization,
+	OrganizationMembership,
+	OrganizationMembershipTag,
 	User,
 } from './models';
 
@@ -862,6 +864,38 @@ export interface BalenaSDK {
 				options?: PineOptions<Organization>,
 			) => Promise<Organization>;
 			remove: (handleOrId: string | number) => Promise<void>;
+			membership: {
+				get(
+					membershipId: number,
+					options?: PineOptions<OrganizationMembership>,
+				): Promise<OrganizationMembership>;
+				getAll(
+					options?: PineOptions<OrganizationMembership>,
+				): Promise<OrganizationMembership[]>;
+				getAllByOrganization(
+					handleOrId: string | number,
+					options?: PineOptions<OrganizationMembership>,
+				): Promise<OrganizationMembership[]>;
+				tags: {
+					getAllByOrganization(
+						handleOrId: string | number,
+						options?: PineOptions<OrganizationMembershipTag>,
+					): Promise<OrganizationMembershipTag[]>;
+					getAllByOrganizationMembership(
+						membershipId: number,
+						options?: PineOptions<OrganizationMembershipTag>,
+					): Promise<OrganizationMembershipTag[]>;
+					getAll(
+						options?: PineOptions<OrganizationMembershipTag>,
+					): Promise<OrganizationMembershipTag[]>;
+					set(
+						membershipId: number,
+						tagKey: string,
+						value: string,
+					): Promise<void>;
+					remove(membershipId: number, tagKey: string): Promise<void>;
+				};
+			};
 		};
 		os: {
 			getConfig(
