@@ -1,4 +1,17 @@
 - commits:
+    - subject: Remove invite by username example
+      hash: d540b653ed0949bd0f2ec105773c9a48de94fec8
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Amit Solanki <amit@balena.io>
+        signed-off-by: Amit Solanki <amit@balena.io>
+      author: Amit Solanki
+      nested: []
+  version: 15.4.4
+  date: 2020-08-31T08:55:10.832Z
+- commits:
     - subject: 'tests: Prevent callback support tests from hanging when failing'
       hash: 1cfb3724c89c1cdb96ff597b3833f594d1ce1559
       body: ''
